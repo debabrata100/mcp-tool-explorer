@@ -1,0 +1,1 @@
+The page at https://demo.playwright.dev/todomvc is a React implementation of the TodoMVC app. The page title is 'React • TodoMVC'. It provides a simple interface for managing a list of todo items with capabilities to add, complete, and delete tasks.
