@@ -2,6 +2,7 @@ import type { Client } from "@modelcontextprotocol/client";
 import { config } from "../config/index.js";
 import type { ToolCallOutput, ToolCallRequest } from "../types/tools.js";
 import { logger } from "../utils/logger.js";
+import { requireApproval } from "../security/approval.js";
 
 /** Validate model-suggested arguments before forwarding them to MCP. */
 export class McpToolExecutor {
@@ -29,6 +30,8 @@ export class McpToolExecutor {
           throw new Error("Navigation outside demo.playwright.dev is not allowed");
         }
       }
+
+      await requireApproval(call.name, args);
 
       logger.info(`Executing ${call.name}`, args);
       const result = await this.client.callTool({

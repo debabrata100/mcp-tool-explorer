@@ -6,6 +6,8 @@ export const config = {
   maxOutputTokens: 1200,
   maxToolResultChars: 12000,
   allowedOrigin: "https://demo.playwright.dev",
+  // Limit exposure until you add stronger browser-level URL enforcement.
+  requireHumanApproval: true,
   allowedTools: [
     "browser_navigate",
     "browser_snapshot",
