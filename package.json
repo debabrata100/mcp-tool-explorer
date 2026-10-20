@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsx src/client.ts",
     "milestone3": "tsx src/openai-mcp.ts",
-    "milestone4": "tsx src/agent.ts"
+    "milestone4": "tsx src/agent.ts",
+    "playwright": "tsx src/playwright-agent.ts"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/mcp": "^0.0.83",
     "@types/node": "^26.6.5",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
