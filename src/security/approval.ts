@@ -3,6 +3,14 @@ import { stdin, stdout } from "node:process";
 import { logger } from "../utils/logger.js";
 import { config } from "../config/index.js";
 
+type ApprovalQuestion = (prompt: string) => Promise<string>;
+let sharedQuestion: ApprovalQuestion | undefined;
+
+/** Share the chat terminal prompt so approval and user input never compete. */
+export function setApprovalQuestion(question?: ApprovalQuestion): void {
+  sharedQuestion = question;
+}
+
 const MUTATING_TOOLS = new Set(["browser_click", "browser_type"]);
 
 export class ApprovalDeniedError extends Error {
@@ -24,14 +32,14 @@ export async function requireApproval(
   }
 
   logger.warn(`Approval required for ${toolName}`, args);
-  const rl = createInterface({ input: stdin, output: stdout });
+  // Legacy single-task commands can still create their own prompt.
+  const rl = sharedQuestion ? undefined : createInterface({ input: stdin, output: stdout });
   try {
-    const answer = (await rl.question("Allow this browser action? [y/N] "))
-      .trim().toLowerCase();
-    if (answer !== "y" && answer !== "yes") {
-      throw new ApprovalDeniedError();
-    }
+    const answer = (await (sharedQuestion ?? ((q: string) => rl!.question(q)))(
+      "Allow this browser action? [y/N] ",
+    )).trim().toLowerCase();
+    if (answer !== "y" && answer !== "yes") throw new ApprovalDeniedError();
   } finally {
-    rl.close();
+    rl?.close();
   }
 }

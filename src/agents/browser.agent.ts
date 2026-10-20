@@ -3,6 +3,7 @@ import { config } from "../config/index.js";
 import { McpToolExecutor } from "../mcp/tool-executor.js";
 import type { OpenAITool, ToolCallOutput } from "../types/tools.js";
 import { logger } from "../utils/logger.js";
+import { ConversationSession } from "../memory/session.js";
 
 const instructions = [
   "You are a browser automation assistant.",
@@ -22,15 +23,20 @@ export class BrowserAgent {
     private readonly executor: McpToolExecutor,
   ) {}
 
+  readonly session = new ConversationSession();
+
   async run(prompt: string): Promise<string> {
     let response = await this.openai.responses.create({
       model: config.model,
       instructions,
       input: prompt,
+      previous_response_id: this.session.previousResponseId,
       tools: this.tools,
       tool_choice: "auto",
       max_output_tokens: config.maxOutputTokens,
     });
+
+    this.session.remember(response.id);
 
     // maxToolRounds counts tool execution rounds, not responses from the model.
     for (let round = 0; round < config.maxToolRounds; round++) {
@@ -44,12 +50,14 @@ export class BrowserAgent {
 
       response = await this.openai.responses.create({
         model: config.model,
+        instructions, // previous_response_id does not carry instructions forward
         previous_response_id: response.id,
         input: outputs,
         tools: this.tools,
         tool_choice: "auto",
         max_output_tokens: config.maxOutputTokens,
       });
+      this.session.remember(response.id);
     }
 
     // The final response after the last allowed round must also be inspected.

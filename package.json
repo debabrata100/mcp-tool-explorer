@@ -9,7 +9,8 @@
     "milestone3": "tsx src/openai-mcp.ts",
     "milestone4": "tsx src/agent.ts",
     "playwright": "tsx src/playwright-agent.ts",
-    "agent6": "tsx src/index.ts"
+    "agent6": "tsx src/index.ts",
+    "chat": "tsx src/chat.ts"
   },
   "keywords": [],
   "author": "",
