@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsx src/client.ts",
-    "milestone3": "tsx src/openai-mcp.ts"
+    "milestone3": "tsx src/openai-mcp.ts",
+    "milestone4": "tsx src/agent.ts"
   },
   "keywords": [],
   "author": "",
